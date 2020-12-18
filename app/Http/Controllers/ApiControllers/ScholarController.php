@@ -23,12 +23,19 @@ class ScholarController extends Controller
 
 	 public function store(Request $request)
     {
-		  $input = $request->all();
+        $request->validate([
+            'image'         =>      'nullable|file'
+        ]);
 
+        $input = $request->all();
+        $scholar = Scholar::create($input);
 
-        $scholars = Scholar::create($input);
+        if ($request->hasFile('image')) {
+            $scholar->addMediaFromRequest('image')->toMediaCollection('image');
 
-	   return response()->json(['success' => true, 'data' => $scholars,'message' => 'User created successfully']);
+        }
+
+        return  response()->json(['success' => true, 'data' => $scholar,'message' => 'order created successfully','url'=>$scholar->getFirstMediaUrl('image')]);
 
 
 
